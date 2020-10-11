@@ -1,0 +1,7 @@
+test/
+.idea/
+__pycache__/
+readme.md
+.gitignore
+Dockerfile*
+.git/

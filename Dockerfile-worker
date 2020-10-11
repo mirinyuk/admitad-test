@@ -1,0 +1,7 @@
+FROM continuumio/miniconda3:latest
+
+WORKDIR /admitad
+COPY ./ /admitad/
+RUN conda env create -f env.yml
+
+ENTRYPOINT /opt/conda/envs/admitad/bin/flask worker --processes $WORKERS_AMOUNT

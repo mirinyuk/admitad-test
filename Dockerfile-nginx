@@ -1,0 +1,4 @@
+FROM nginx:latest
+
+COPY ./deploy/nginx/config.nginx /etc/nginx/nginx.conf
+COPY --chown=nginx:nginx ./deploy/nginx/front /usr/share/nginx

@@ -1,0 +1,72 @@
+version: "3.7"
+
+x-common-variables: &common-variables
+  FLASK_ENV: prod
+  DB_USER: admitad
+  DB_PASS: admitad
+  DB_ADDR: postgres
+  DB_PORT: 5432
+  DB_NAME: admitad
+
+services:
+  app:
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      GUNICORN_WORKERS: 2
+      << : *common-variables
+    build:
+      dockerfile: Dockerfile-app
+      context: ./
+    ports:
+    - 5000:5000
+    links:
+      - postgres
+      - redis
+    depends_on:
+      - postgres
+      - redis
+
+  worker:
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      WORKERS_AMOUNT: 1
+      <<: *common-variables
+    build:
+      dockerfile: Dockerfile-worker
+      context: ./
+    links:
+      - redis
+      - postgres
+    depends_on:
+      - redis
+      - postgres
+
+  postgres:
+    environment:
+      PGDATA: /data
+      POSTGRES_PASSWORD: admitad
+      POSTGRES_USER: admitad
+      POSTGRES_DB: admitad
+    build:
+      dockerfile: Dockerfile-postgres
+      context: ./
+    tmpfs:
+      - /data
+    ports:
+    - 5432:5432
+
+  redis:
+    image: redis
+    ports:
+    - 6379:6379
+
+  nginx:
+    build:
+      dockerfile: Dockerfile-nginx
+      context: ./
+    ports:
+    - 8081:80
+    depends_on:
+      - app
+    links:
+      - app

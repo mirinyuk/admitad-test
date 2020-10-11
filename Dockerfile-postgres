@@ -1,0 +1,4 @@
+FROM postgres:12.4-alpine
+
+COPY ./deploy/postgresql/init.sql /docker-entrypoint-initdb.d/init.sql
+COPY  ./deploy/postgresql/postgres.conf /etc/postgresql/postgresql.conf
